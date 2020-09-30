@@ -39,15 +39,14 @@ mysql> FLUSH PRIVILEGES;
 ## Installing and Running Service
 
 ### Build from source
- - Clone this repository and `cd` to the `booleans` directory where you cloned it.
+ - Clone this repository and `cd` to the `booleans/src` directory where you cloned it.
  - Install the go module
  ```
  go mod download
  ```
- - Add parameters in the services.go file: username, password and table
  - Run
  ```
- go run main.go
+ DB_USER=<username> DB_PASS=<password> go run main.go 
 ```
 
 ### With Docker 
@@ -57,7 +56,7 @@ docker pull mishranant1/booleans
 ```
 - Run the image
 ```
-docker run -p 8080:8080 -e DOCKER=true --name=booleans mishranant1/booleans
+docker run -i -d -t -p 8080:8080 -e DB_USER=<username> -e DB_PASS=<password> mishranant1/booleans
 ```
 
 ## API
