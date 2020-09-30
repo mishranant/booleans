@@ -24,7 +24,6 @@ type RepoImpl struct{}
 
 // Boolean is the model for our database schema
 type Boolean struct {
-	gorm.Model
 	Name string
 	Val  bool
 	UUID string `gorm:"primary_key"`
