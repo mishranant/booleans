@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -33,10 +34,10 @@ type Boolean struct {
 var MyRepo Repo = RepoImpl{}
 var db *gorm.DB
 
-const (
-	user     = ""
-	password = ""
-	table    = ""
+var (
+	user     = os.Getenv("DB_USER")
+	password = os.Getenv("DB_PASS")
+	table    = "rzp"
 )
 
 // Init will setup the database and create table

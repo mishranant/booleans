@@ -44,6 +44,7 @@ mysql> FLUSH PRIVILEGES;
  ```
  go mod download
  ```
+ - Add parameters in the services.go file: username, password and table
  - Run
  ```
  go run main.go
@@ -52,11 +53,11 @@ mysql> FLUSH PRIVILEGES;
 ### With Docker 
 - Download the image from dockerhub
 ```
-docker pull mishranant/booleans
+docker pull mishranant1/booleans
 ```
 - Run the image
 ```
-docker run -p 8080:8080 -e DOCKER=true --name=booleans mishranant/booleans
+docker run -p 8080:8080 -e DOCKER=true --name=booleans mishranant1/booleans
 ```
 
 ## API
