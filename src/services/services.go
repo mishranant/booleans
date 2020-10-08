@@ -37,13 +37,16 @@ var db *gorm.DB
 var (
 	user     = os.Getenv("DB_USER")
 	password = os.Getenv("DB_PASS")
+	host     = os.Getenv("DB_HOST")
+	port     = os.Getenv("DB_PORT")
 	table    = "rzp"
 )
 
 // Init will setup the database and create table
 func Init() {
 	var err error
-	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", user, password, table))
+	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", user, password, host, port, table))
+
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -46,7 +46,7 @@ mysql> FLUSH PRIVILEGES;
  ```
  - Run
  ```
- DB_USER=<username> DB_PASS=<password> go run main.go 
+ DB_USER=<username> DB_PASS=<password> DB_HOST=localhost DB_PORT=3306 go run main.go 
 ```
 
 ### With Docker 
@@ -56,7 +56,7 @@ docker pull mishranant1/booleans
 ```
 - Run the image
 ```
-docker run -i -d -t -p 8080:8080 -e DB_USER=<username> -e DB_PASS=<password> mishranant1/booleans
+docker run -i -t -p 8080:8080 -e DB_USER=<username> -e DB_PASS=<password> -e DB_PORT='3306' -e DB_HOST='host.docker.internal' mishranant1/booleans
 ```
 
 ## API
