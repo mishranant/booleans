@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 
@@ -35,22 +36,23 @@ var MyRepo Repo = RepoImpl{}
 var db *gorm.DB
 
 var (
-	user     = os.Getenv("DB_USER")
-	password = os.Getenv("DB_PASS")
-	host     = os.Getenv("DB_HOST")
-	port     = os.Getenv("DB_PORT")
-	table    = "rzp"
+	user      = os.Getenv("DB_USER")
+	password  = os.Getenv("DB_PASS")
+	host      = os.Getenv("DB_HOST")
+	port      = os.Getenv("DB_PORT")
+	dbname    = "rzp"
+	tableName = "booleans"
 )
 
 // Init will setup the database and create table
 func Init() {
 	var err error
-	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", user, password, host, port, table))
+	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", user, password, host, port, dbname))
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.Table("booleans").AutoMigrate(&Boolean{})
+	db.Table(tableName).AutoMigrate(&Boolean{})
 }
 
 // AddToDB is for making an entry into the database
@@ -60,14 +62,14 @@ func (repo RepoImpl) AddToDB(name string, value bool) Boolean {
 		Val:  value,
 		Name: name,
 	}
-	db.Table("booleans").Create(&b)
+	db.Table(tableName).Create(&b)
 	return b
 }
 
 // GetFromDB is to get an entry from the database
 func (repo RepoImpl) GetFromDB(uuid string) (Boolean, error) {
 	var b Boolean
-	if res := db.Table("booleans").Where("uuid = ?", uuid).First(&b); res.Error != nil {
+	if res := db.Table(tableName).Where("uuid = ?", uuid).First(&b); res.Error != nil {
 		return Boolean{}, res.Error
 	}
 	return b, nil
@@ -75,22 +77,23 @@ func (repo RepoImpl) GetFromDB(uuid string) (Boolean, error) {
 
 // UpdateInDB does what its name suggests
 func (repo RepoImpl) UpdateInDB(name string, value bool, uuid string) (Boolean, error) {
-	var b Boolean
-	res := db.Table("booleans").Where("uuid = ?", uuid).First(&b)
+	res := db.Table(tableName).Where("uuid = ?", uuid)
 	if res.Error != nil {
 		return Boolean{}, res.Error
 	}
-	if name != "" {
-		b.Name = name
+	ret := gin.H{
+		"val": value,
 	}
-	b.Val = value
-	db.Save(&b)
-	return b, nil
+	if name != "" {
+		ret["name"] = name
+	}
+	res.Updates(ret)
+	return MyRepo.GetFromDB(uuid)
 }
 
 // DeleteFromDB sets the deleted_at column to the current timestamp, thus making the entry unavailable
 func (repo RepoImpl) DeleteFromDB(uuid string) error {
-	res := db.Table("booleans").Where("uuid = ?", uuid)
+	res := db.Table(tableName).Where("uuid = ?", uuid)
 	if res.Error == nil {
 		res.Delete(&Boolean{})
 	}
